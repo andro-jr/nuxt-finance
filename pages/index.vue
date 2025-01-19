@@ -43,4 +43,10 @@ const selectedView = ref(transactionViewOptions[1]);
       :loading="false"
     />
   </section>
+
+  <section>
+    <TransactionView />
+    <TransactionView />
+    <TransactionView />
+  </section>
 </template>
