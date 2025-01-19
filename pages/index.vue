@@ -10,4 +10,23 @@ const selectedView = ref(transactionViewOptions[1]);
       <USelect v-model="selectedView" :options="transactionViewOptions" />
     </div>
   </section>
+
+  <section
+    class="grid gid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10"
+  >
+    <TrendSection color="green" title="Income" :amount="4000" :loading="true" />
+    <TrendSection
+      color="green"
+      title="Income"
+      :amount="4000"
+      :loading="false"
+    />
+    <TrendSection color="red" title="Income" :amount="4000" :loading="false" />
+    <TrendSection
+      color="green"
+      title="Income"
+      :amount="4000"
+      :loading="false"
+    />
+  </section>
 </template>
