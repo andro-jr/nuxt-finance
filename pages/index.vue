@@ -1,6 +1,20 @@
 <script setup>
 import { transactionViewOptions } from "~/constants.js";
 const selectedView = ref(transactionViewOptions[1]);
+
+const supabase = useSupabaseClient();
+
+const transactions = ref([]);
+
+const { data, pending } = await useAsyncData("transactions", async () => {
+  const { data, error } = await supabase.from("transactions").select();
+
+  if (error) return [];
+
+  return data;
+});
+
+transactions.value = data.value;
 </script>
 
 <template>
@@ -11,9 +25,7 @@ const selectedView = ref(transactionViewOptions[1]);
     </div>
   </section>
 
-  <section
-    class="grid gid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10"
-  >
+  <section class="grid gid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 mb-10">
     <TrendSection
       color="green"
       title="Income"
@@ -45,8 +57,10 @@ const selectedView = ref(transactionViewOptions[1]);
   </section>
 
   <section>
-    <TransactionView />
-    <TransactionView />
-    <TransactionView />
+    <TransactionView
+      v-for="transaction in transactions"
+      :key="transaction.id"
+      :transaction="transaction"
+    />
   </section>
 </template>
