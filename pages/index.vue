@@ -5,7 +5,7 @@ const selectedView = ref(transactionViewOptions[1]);
 const supabase = useSupabaseClient();
 
 const transactions = ref([]);
-
+const isOpen = ref(false);
 const isLoading = ref(false);
 
 const fetchTransactions = async () => {
@@ -45,7 +45,6 @@ const transactionsGroupedByDate = computed(() => {
 });
 
 const income = computed(() => transactions.value.filter((t) => t.type === "Income"));
-console.log("income changed :", income.value);
 const expense = computed(() => transactions.value.filter((t) => t.type === "Expense"));
 const incomeCount = computed(() => income.value.length);
 const expenseCount = computed(() => expense.value.length);
@@ -107,7 +106,19 @@ const expenseTotal = computed(() =>
       </div>
     </div>
     <div>
-      <UButton icon="i-heroicons-plus-circle" color="white" variant="solid" label="Add" />
+      <UModal v-model="isOpen">
+        <UCard>
+          <template #header> Add Transaction </template>
+          <div>Hello!</div>
+        </UCard>
+      </UModal>
+      <UButton
+        icon="i-heroicons-plus-circle"
+        color="white"
+        variant="solid"
+        label="Add"
+        @click="isOpen = true"
+      />
     </div>
   </section>
 
