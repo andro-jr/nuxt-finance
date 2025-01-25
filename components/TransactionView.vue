@@ -45,6 +45,7 @@ const iconColor = computed(() => (isIncome.value ? "text-green-600" : "text-red-
 const isLoading = ref(false);
 const toast = useToast();
 const supabase = useSupabaseClient();
+const emit = defineEmits(["transactionDeleted"]);
 
 const deleteTransaction = async () => {
   isLoading.value = true;
@@ -60,6 +61,7 @@ const deleteTransaction = async () => {
       icon: "i-heroicons-check-circle",
       color: "green",
     });
+    emit("transactionDeleted", props.transaction.id);
   } catch (error) {
     console.log("error :", error);
     toast.add({

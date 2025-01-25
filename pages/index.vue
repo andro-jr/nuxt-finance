@@ -6,15 +6,27 @@ const supabase = useSupabaseClient();
 
 const transactions = ref([]);
 
-const { data, pending } = await useAsyncData("transactions", async () => {
-  const { data, error } = await supabase.from("transactions").select();
+const isLoading = ref(false);
 
-  if (error) return [];
+const fetchTransactions = async () => {
+  isLoading.value = true;
 
-  return data;
-});
+  try {
+    const { data } = await useAsyncData("transactions", async () => {
+      const { data, error } = await supabase.from("transactions").select();
 
-transactions.value = data.value;
+      if (error) throw error;
+
+      return data;
+    });
+    transactions.value = data.value;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+await fetchTransactions();
 
 const transactionsGroupedByDate = computed(() => {
   let grouped = {};
@@ -47,32 +59,32 @@ const transactionsGroupedByDate = computed(() => {
       title="Income"
       :amount="4000"
       :last-amount="3000"
-      :loading="false"
+      :loading="isLoading"
     />
     <TrendSection
       color="green"
       title="Expense"
       :amount="4000"
       :last-amount="6000"
-      :loading="false"
+      :loading="isLoading"
     />
     <TrendSection
       color="red"
       title="Investments"
       :amount="4000"
       :last-amount="2000"
-      :loading="false"
+      :loading="isLoading"
     />
     <TrendSection
       color="green"
       title="Savings"
       :last-amount="8000"
       :amount="4000"
-      :loading="false"
+      :loading="isLoading"
     />
   </section>
 
-  <section>
+  <section v-if="!isLoading">
     <div
       v-for="(transactionsOnDay, date) in transactionsGroupedByDate"
       :key="date"
@@ -83,7 +95,9 @@ const transactionsGroupedByDate = computed(() => {
         v-for="transaction in transactionsOnDay"
         :key="transaction.id"
         :transaction="transaction"
+        @transactionDeleted="fetchTransactions"
       />
     </div>
   </section>
+  <section v-else><USkeleton class="h-8 w-full mb-2" v-for="i in 4" :key="i" /></section>
 </template>
